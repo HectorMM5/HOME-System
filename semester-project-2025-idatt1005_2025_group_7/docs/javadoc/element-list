@@ -1,0 +1,16 @@
+no.ntnu.idatx1005
+no.ntnu.idatx1005.controller
+no.ntnu.idatx1005.dao
+no.ntnu.idatx1005.dao.exceptions
+no.ntnu.idatx1005.database
+no.ntnu.idatx1005.database.exceptions
+no.ntnu.idatx1005.model.task
+no.ntnu.idatx1005.model.user
+no.ntnu.idatx1005.model.validators
+no.ntnu.idatx1005.navigation
+no.ntnu.idatx1005.observer
+no.ntnu.idatx1005.service
+no.ntnu.idatx1005.storage
+no.ntnu.idatx1005.view.component
+no.ntnu.idatx1005.view.container
+no.ntnu.idatx1005.view.content

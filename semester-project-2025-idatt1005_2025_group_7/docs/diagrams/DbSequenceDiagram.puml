@@ -1,0 +1,27 @@
+@startuml
+skinparam backgroundColor #fdfdfd
+skinparam sequenceArrowThickness 1.5
+skinparam sequenceMessageAlign center
+
+actor User
+participant "H.O.M.E App" as App
+participant "Local DB" as H2
+participant "Remote DB" as Namox
+
+== View tasks==
+User -> App: View tasks
+App -> H2: SELECT * FROM task
+H2 --> App: Task list
+App --> User: Display tasks
+
+== Add/modify/delete task==
+User -> App: Add/modify/delete task
+App -> Namox: INSERT task (...)
+App -> Namox: UPDATE task (...)
+App -> Namox: DELETE task (...)
+Namox --> App: Confirmation
+App -> H2: Refresh local DB
+App -> H2: Remote resultset
+App --> User: Display changes
+
+@enduml

@@ -1,0 +1,97 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+skinparam dpi 300
+
+autonumber
+
+actor User #blue
+participant Login
+participant Signup
+participant "Main view" as All_Tasks
+participant Logout
+
+activate User
+activate Login
+
+Group Authentication
+  User -> Login: Login Request
+  Login --> Login: Validate credentials
+  Login -[#green]> All_Tasks: Valid
+
+  activate All_Tasks
+
+  User -> Signup: Signup Request
+  Signup --> Signup: Validate request
+  Signup -[#green]> Login: Valid
+  deactivate Login
+end
+
+participant "Task table" as Tasks
+participant EditTask as "Edit Task"
+participant newTask as "Create New Task"
+
+participant Distribute
+participant Insights
+participant Settings
+
+User -> All_Tasks: See all tasks
+User -> All_Tasks: See 'my tasks' (due today & this week)
+User -> All_Tasks: See all open tasks
+User -> All_Tasks: See completed tasks
+
+All_Tasks -> Tasks: Show filtered task table(s)
+
+activate Tasks
+Tasks --> All_Tasks: Go back
+
+User -> Tasks: Click on a task to edit
+Tasks -> EditTask: Edit task
+activate EditTask
+EditTask --[#red]> Tasks: Cancel
+EditTask --> EditTask: Validate entered\n data
+EditTask -[#green]> Tasks: Save changes
+deactivate EditTask
+deactivate Tasks
+
+User -> All_Tasks: Create new task
+All_Tasks -> newTask: Show 'create task' page
+activate newTask
+newTask --> newTask: Validate entered\n data
+newTask -[#green]> All_Tasks: Save new task
+deactivate newTask
+
+User -> All_Tasks: Distribute a task
+All_Tasks -> Distribute: Show 'distribute' page
+activate Distribute
+Distribute --> Distribute: Assign task to user
+Distribute --> Distribute: Auto distribute tasks
+Distribute --> All_Tasks: Go back
+deactivate Distribute
+
+User -> All_Tasks: See insights
+All_Tasks -> Insights: Show 'insights' page
+activate Insights
+Insights --> All_Tasks: Go back
+deactivate Insights
+
+User -> All_Tasks: Go to settings
+All_Tasks -> Settings: Show 'settings' page
+activate Settings
+Settings --> Settings: Edit personal info
+Settings --> Settings: Edit account settings
+Settings --> Settings: Change password
+Settings --> All_Tasks: Go back
+deactivate Settings
+
+User -> All_Tasks: Log out
+All_Tasks -> Logout: Show 'logout' page
+activate Logout
+Logout --> Logout: Process request
+Logout --> All_Tasks: Logout
+deactivate Logout
+All_Tasks -> Login: Redirect to login
+deactivate All_Tasks
+deactivate User
+
+@enduml

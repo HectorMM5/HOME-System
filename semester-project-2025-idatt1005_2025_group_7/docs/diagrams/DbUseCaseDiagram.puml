@@ -1,0 +1,25 @@
+@startuml
+
+actor User
+actor "Remote Database" as RemoteDB
+actor "In-memory Database" as LocalDB
+
+rectangle "H.O.M.E App" {
+    usecase "See tasks" as UC1
+    usecase "Assign/Distribute tasks" as UC2
+    usecase "Add/update/delete Task" as UC3
+    usecase "Clone Data from Remote" as UC4
+}
+
+User --> UC1
+User --> UC2
+User --> UC3
+
+UC1 --> LocalDB
+UC2 --> RemoteDB
+UC3 --> RemoteDB
+
+RemoteDB --> UC4
+UC4 --> LocalDB
+
+@enduml

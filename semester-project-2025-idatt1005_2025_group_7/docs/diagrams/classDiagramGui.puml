@@ -1,0 +1,351 @@
+@startuml
+
+'!theme plain
+left to right direction
+skinparam linetype ortho
+'skinparam backgroundcolor transparent
+skinparam dpi 300
+
+class BaseViewController {
+  + onTaskCompleted(Task): void
+  # handleTaskUpdated(Task): void
+  + onCacheRefreshed(): void
+  + onTaskCreated(Task): void
+  + onTaskAssigned(Task, User): void
+  # handleTaskCompleted(Task): void
+  # handleCacheRefreshed(): void
+  # handleTaskDeleted(Task): void
+  + onTaskDeleted(Task): void
+  # handleTaskAssigned(Task, User): void
+  # handleTaskCreated(Task): void
+  + onTaskUpdated(Task): void
+}
+class ContentView {
+  + getHeaderView(): HeaderView
+  - initialize(): void
+  + showView(Node): void
+  + updateHeaderView(Node): void
+  + getView(): ContentView
+}
+class DistributionView {
+  - createUnassignedTasksContainer(): VBox
+  - initialize(): void
+  + showInvalidAssignmentDialog(User, Task): void
+  + addObserver(ButtonClickObserver): void
+  + refreshView(): void
+  + showConfirmAutoDistributionDialog(List<Pair<Task, User>>): boolean
+  + getView(): HBox
+  + notifyObservers(String): void
+  + setTaskDropCallback(BiConsumer<User, String>): void
+  + showNoAssignmentsPossibleDialog(): void
+  + removeObserver(ButtonClickObserver): void
+  - createUsersContainer(): VBox
+  + showConfirmAssignmentDialog(User, Task): boolean
+  + notifyObserversWithTask(String, Task): void
+}
+class DistributionViewController {
+  # handleTaskDeleted(Task): void
+  - initializeView(): void
+  + onButtonClickedWithTask(String, Task): void
+  # handleCacheRefreshed(): void
+  + handleAutoDistribution(): void
+  # handleTaskAssigned(Task, User): void
+  # handleTaskUpdated(Task): void
+  - calculateOptimalAssignments(List<Task>, List<User>): List<Pair<Task, User>>
+  # handleTaskCompleted(Task): void
+  + onButtonClicked(String): void
+  + handleTaskDrop(User, String): void
+  # handleTaskCreated(Task): void
+}
+class EditTaskView {
+  - initializeContainers(): void
+  + refreshUserAssignments(): void
+  + getTaskTitle(): String
+  + refreshView(): void
+  - initializeAssignedUsers(): void
+  - loadChangelogEntries(): void
+  - createTaskAssignmentContainer(): VBox
+  + getTaskId(): UUID
+  - initializeAvailableUsers(): void
+  + getCompletedDate(): LocalDateTime
+  - handleCompleteTaskButtonAction(): void
+  + getTaskCompleted(): boolean
+  + getTaskDueDate(): LocalDateTime
+  + setTask(Task): void
+  - updateChangelogPage(): void
+  - createTaskInfoContainer(): VBox
+  + getTaskDescription(): String
+  - createChangelogSection(): VBox
+  + getTaskSize(): Size
+  + getTaskAssignedUserIds(): List<UUID>
+  - handleRemoveUserButtonAction(HBox, User): void
+  + getTaskPriority(): Priority
+  + updateCompletionStatus(boolean): void
+  - constructUserContainer(String, User): HBox
+  - handleAddUserButtonAction(HBox, User): void
+  - initializeValues(): void
+  + getView(): EditTaskView
+  + getTaskCreatedDate(): LocalDateTime
+}
+class EditTaskViewController {
+  # handleTaskDeleted(Task): void
+  # handleTaskAssigned(Task, User): void
+  + onButtonClickedWithTask(String, Task): void
+  # handleTaskUpdated(Task): void
+  # handleTaskCompleted(Task): void
+  # handleTaskCreated(Task): void
+  # handleCacheRefreshed(): void
+  + onButtonClicked(String): void
+}
+class HeaderView {
+  + removeObserver(ButtonClickObserver): void
+  - initialize(): void
+  + showSettingsViewHeader(): void
+  - handleSearchTextChanged(String): void
+  + showDistributionViewHeader(): void
+  - initializeSearchComponents(): void
+  + showNewTaskViewHeader(): void
+  + notifyObserversWithTask(String, Task): void
+  + notifyObservers(String): void
+  - createSearchResultItem(Task): HBox
+  + showEditTaskViewHeader(): void
+  + getView(): HeaderView
+  - initializeIconButton(MFXButton, MFXFontIcon, EventHandler<ActionEvent>): MFXButton
+  - initializeTextButton(MFXButton, String, EventHandler<ActionEvent>): MFXButton
+  + addObserver(ButtonClickObserver): void
+  + showMainViewHeader(): void
+}
+class InsightsView {
+  + initializeInsightsLayout(): void
+  - completedTasksTodayView(): VBox
+  - completedTasksWeekView(): VBox
+  + tasksByPriorityView(): VBox
+  - countTaskByPriority(): Map<Priority, Integer>
+  - createTaskItem(String): VBox
+  - fetchTasksFromDatabase(): void
+  - pendingTasksView(): VBox
+}
+class InsightsViewController {
+  # handleTaskCreated(Task): void
+  - updateCharts(): void
+  + onButtonClickedWithTask(String, Task): void
+  # handleTaskUpdated(Task): void
+  # handleTaskAssigned(Task, User): void
+  # handleCacheRefreshed(): void
+  - initializeView(): void
+  # handleTaskCompleted(Task): void
+  + onButtonClicked(String): void
+  # handleTaskDeleted(Task): void
+}
+class LoginView {
+  + notifyObservers(String): void
+  + notifyOfLogin(): void
+  + clearFields(): void
+  + showErrorMessage(String): void
+  + getView(): VBox
+  + getEmail(): String
+  + getPassword(): String
+  + addObserver(ButtonClickObserver): void
+  + notifyObserversWithTask(String, Task): void
+  + removeObserver(ButtonClickObserver): void
+  - initializeLoginBox(): void
+}
+class LoginViewController {
+  + onButtonClicked(String): void
+  + onButtonClickedWithTask(String, Task): void
+  + setOnLoginUser(Consumer<User>): void
+  - handleLoginButtonAction(): void
+}
+class MainView {
+  - initialize(): void
+  + getContentView(): ContentView
+  + getView(): MainView
+  + getSidebarView(): SidebarView
+}
+class NewTaskView {
+  + refreshUserAssignments(): void
+  + getTaskDescription(): String
+  + getTaskDueDate(): LocalDateTime
+  - handleAddUserButtonAction(HBox, User): void
+  + resetForm(): void
+  + getTaskTitle(): String
+  + getView(): HBox
+  + getTaskPriority(): Priority
+  + getTaskSize(): Size
+  - initializeContainers(): void
+  + getTaskAssignedUserIds(): List<UUID>
+  - handleRemoveUserButtonAction(HBox, User): void
+  - constructUserContainer(String, User): HBox
+  - initializeAvailableUsers(): void
+}
+class NewTaskViewController {
+  + onButtonClicked(String): void
+  + handleCreateTask(String, String, LocalDateTime, Priority, Size, List<UUID>): void
+  # handleTaskCompleted(Task): void
+  # handleTaskCreated(Task): void
+  # handleCacheRefreshed(): void
+  # handleTaskAssigned(Task, User): void
+  + onButtonClickedWithTask(String, Task): void
+  # handleTaskUpdated(Task): void
+  # handleTaskDeleted(Task): void
+}
+class SettingsView {
+  + getConfirmPassword(): String
+  + removeObserver(ButtonClickObserver): void
+  + showSuccessDialog(String): void
+  + showDeleteConfirmDialog(): boolean
+  + getCurrentPassword(): String
+  + getTaskCapacity(): int
+  - initialize(): void
+  + getNewPassword(): String
+  + showErrorDialog(String): void
+  + getLastName(): String
+  + getEmail(): String
+  + notifyObserversWithTask(String, Task): void
+  + getSicknessStatus(): boolean
+  + addObserver(ButtonClickObserver): void
+  + notifyObservers(String): void
+  + getFirstName(): String
+  + getCurrentUser(): User
+}
+class SettingsViewController {
+  + onButtonClicked(String): void
+  - handleDeleteAccount(): void
+  # handleTaskCreated(Task): void
+  + onButtonClickedWithTask(String, Task): void
+  # handleCacheRefreshed(): void
+  # handleTaskUpdated(Task): void
+  # handleTaskAssigned(Task, User): void
+  # handleTaskDeleted(Task): void
+  + setOnUpdateLoggedInUser(Consumer<User>): void
+  - handleChangePassword(): void
+  # handleTaskCompleted(Task): void
+  - isValidPassword(String): boolean
+  - handleSaveSettings(): void
+}
+class SidebarView {
+  - initializeIcon(String): MFXFontIcon
+  - createComponents(): void
+  + addObserver(ButtonClickObserver): void
+  + notifyObservers(String): void
+  + getView(): VBox
+  + removeObserver(ButtonClickObserver): void
+  + notifyObserversWithTask(String, Task): void
+  - initializeButton(MFXButton, String, String, EventHandler<ActionEvent>): void
+}
+class SignUpView {
+  - initializeSignUpBox(): void
+  + getLastName(): String
+  + removeObserver(ButtonClickObserver): void
+  + getPassword(): String
+  + notifyObserversWithTask(String, Task): void
+  + getEmail(): String
+  + getView(): VBox
+  + clearFields(): void
+  + addObserver(ButtonClickObserver): void
+  + getFirstName(): String
+  + notifyObservers(String): void
+  + notifyOfSignup(): void
+  + showErrorMessage(String): void
+  + getRepeatPassword(): String
+}
+class SignUpViewController {
+  - handleSignUpButtonAction(): void
+  - handleSignUp(): boolean
+  + onButtonClicked(String): void
+  - verifyCredentials(): boolean
+  + onButtonClickedWithTask(String, Task): void
+}
+class TasksView {
+  + setTaskClickCallback(Consumer<Task>): void
+  + addObserver(ButtonClickObserver): void
+  + removeObserver(ButtonClickObserver): void
+  - setClickAction(MFXTableView<Task>): void
+  + myTasksView(): void
+  + setFormatAssigneeNames(Function<Task, String>): void
+  + refreshTasksTable(): void
+  - capitalize(String): String
+  - populateTable(MFXTableView<Task>, LinkedHashMap<String, String>): void
+  - setTooltip(Node, String): void
+  + openTasksView(): void
+  + notifyObservers(String): void
+  - setColumns(String, boolean): LinkedHashMap<String, String>
+  + completedTasksView(): void
+  + allTasksView(): void
+  + notifyObserversWithTask(String, Task): void
+}
+class TasksViewController {
+  + formatAssigneeNames(Task): String
+  # handleCacheRefreshed(): void
+  - fetchTasks(List<Task>): ObservableList<Task>
+  # handleTaskCreated(Task): void
+  + onButtonClicked(String): void
+  + onButtonClickedWithTask(String, Task): void
+  - initializeView(): void
+  - handleTaskClick(Task): void
+  + refreshTasks(): void
+  # handleTaskUpdated(Task): void
+  # handleTaskDeleted(Task): void
+  # handleTaskCompleted(Task): void
+  # handleTaskAssigned(Task, User): void
+}
+class ViewFactory {
+  - createDistributionView(): Node
+  - createNewTaskView(): Node
+  - createTasksView(Map<String, Object>): Node
+  + createView(ViewType, Map<String, Object>): Node
+  + addButtonClickObservers(List<ButtonClickObserver>): void
+  - createInsightsView(): Node
+  - createSettingsView(): Node
+  - createEditTaskView(Map<String, Object>): Node
+  + createSignUpView(): Node
+  + createLoginView(): Node
+}
+class ViewNavigator {
+  + resetNavHistory(): void
+  + navigateTo(ViewType): void
+  + goBack(): void
+  + getCurrentState(): NavigationState
+  + resetToView(ViewType, Map<String, Object>): void
+  + navigateTo(ViewType, Map<String, Object>): void
+}
+
+ContentView                "1" *-[#595959,plain]-> "headerView\n1" HeaderView
+ContentView                 -[#595959,dashed]->  HeaderView                 : "«create»"
+DistributionViewController  -[#000082,plain]-^  BaseViewController
+DistributionViewController "1" *-[#595959,plain]-> "distributionView\n1" DistributionView
+EditTaskViewController      -[#000082,plain]-^  BaseViewController
+EditTaskViewController     "1" *-[#595959,plain]-> "editTaskView\n1" EditTaskView
+InsightsViewController      -[#000082,plain]-^  BaseViewController
+InsightsViewController     "1" *-[#595959,plain]-> "insightsView\n1" InsightsView
+LoginViewController        "1" *-[#595959,plain]-> "loginView\n1" LoginView
+MainView                    -[#595959,dashed]->  ContentView                : "«create»"
+MainView                   "1" *-[#595959,plain]-> "contentView\n1" ContentView
+MainView                    -[#595959,dashed]->  SidebarView                : "«create»"
+MainView                   "1" *-[#595959,plain]-> "sidebarView\n1" SidebarView
+NewTaskViewController       -[#000082,plain]-^  BaseViewController
+NewTaskViewController      "1" *-[#595959,plain]-> "newTaskView\n1" NewTaskView
+SettingsViewController      -[#000082,plain]-^  BaseViewController
+SettingsViewController     "1" *-[#595959,plain]-> "settingsView\n1" SettingsView
+SignUpViewController       "1" *-[#595959,plain]-> "signUpView\n1" SignUpView
+TasksViewController         -[#000082,plain]-^  BaseViewController
+TasksViewController        "1" *-[#595959,plain]-> "tasksView\n1" TasksView
+ViewFactory                 -[#595959,dashed]->  DistributionView           : "«create»"
+ViewFactory                 -[#595959,dashed]->  DistributionViewController : "«create»"
+ViewFactory                 -[#595959,dashed]->  EditTaskView               : "«create»"
+ViewFactory                 -[#595959,dashed]->  EditTaskViewController     : "«create»"
+ViewFactory                 -[#595959,dashed]->  InsightsView               : "«create»"
+ViewFactory                 -[#595959,dashed]->  InsightsViewController     : "«create»"
+ViewFactory                 -[#595959,dashed]->  LoginView                  : "«create»"
+ViewFactory                 -[#595959,dashed]->  LoginViewController        : "«create»"
+ViewFactory                 -[#595959,dashed]->  NewTaskView                : "«create»"
+ViewFactory                 -[#595959,dashed]->  NewTaskViewController      : "«create»"
+ViewFactory                 -[#595959,dashed]->  SettingsView               : "«create»"
+ViewFactory                 -[#595959,dashed]->  SettingsViewController     : "«create»"
+ViewFactory                 -[#595959,dashed]->  SignUpView                 : "«create»"
+ViewFactory                 -[#595959,dashed]->  SignUpViewController       : "«create»"
+ViewFactory                 -[#595959,dashed]->  TasksView                  : "«create»"
+ViewFactory                 -[#595959,dashed]->  TasksViewController        : "«create»"
+ViewNavigator              "1" *-[#595959,plain]-> "contentView\n1" ContentView
+ViewNavigator              "1" *-[#595959,plain]-> "viewFactory\n1" ViewFactory
+@enduml

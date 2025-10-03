@@ -1,0 +1,7 @@
+Short summary 14. January
+- All documentation must be saved, will be delivered
+- Github to be used no matter file type/nature
+- Contract must be uploaded to GitHub Wiki
+- Must use Github boards (issue board), tasks. Everything must be tracked. Use the "To do", "in progress", "completed" sections
+
+Weekly meetings. In week 9 and 10: teams-meeting. (Scott is not in Trondheim). These will be 4. March and 25. February. Eventually, the meetings might be moved one day. 

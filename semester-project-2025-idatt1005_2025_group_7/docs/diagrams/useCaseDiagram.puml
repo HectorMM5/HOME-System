@@ -1,0 +1,95 @@
+@startuml
+
+skinparam {
+    nodesep 20
+    ranksep 160
+    rectangleFontSize 36
+    usecaseFontSize 20
+    packageFontSize 24
+    actorFontSize 30
+    actorStyle awesome
+    actorShadowing true
+    componentShadowing true
+    rectangleShadowing true
+    dpi 300
+}
+left to right direction
+
+actor User #lightblue
+
+rectangle "H.O.M.E. Application" {
+    package "Task Management" {
+      usecase "Create new Task" as UC_Create
+
+      usecase "Edit task details" as UC_Edit
+
+      usecase "Interact with task" as UC_Interact
+      usecase "Complete / restore task" as UC_ToggleComplete
+      usecase "Assign Task to User" as UC_Assign
+      usecase "View task history" as UC_History
+    }
+
+    package "Task Display" {
+      usecase "View Tasks" as UC_View
+      usecase "View tasks due today" as UC_Today
+      usecase "View tasks due this week" as UC_Weekly
+      usecase "View all tasks" as UC_All
+      usecase "View Open Tasks" as UC_Open
+      usecase "View Completed Tasks" as UC_CompletedList
+      usecase "View My Tasks" as UC_MyTasks
+      usecase "Search Tasks" as UC_Search
+    }
+
+    package "User Settings" {
+      usecase "Manage Settings" as UC_Settings
+      usecase "Change account settings" as UC_UpdateInfo
+      usecase "Change Password" as UC_ChangePass
+      usecase "Set Task Capacity" as UC_SetCapacity
+      usecase "Update Availability Status" as UC_UpdateStatus
+      usecase "Delete Account" as UC_DeleteAccount
+    }
+
+    package "Task Distribution" {
+      usecase "Distribute Tasks" as UC_Distribute
+      usecase "Auto Distribute Tasks" as UC_AutoDistribute
+      usecase "Manual Distribution" as UC_ManualDistribute
+    }
+}
+
+' Task Management Relationships
+User ---> UC_Create
+User --> UC_Interact
+
+UC_Interact --> UC_Edit
+UC_Interact --> UC_History
+UC_Interact --> UC_ToggleComplete
+UC_Interact --> UC_Assign
+
+
+' Task Viewing Relationships
+User --> UC_View
+UC_View --> UC_All
+UC_View --> UC_Open
+UC_View --> UC_CompletedList
+UC_View --> UC_Search
+
+User --> UC_MyTasks
+UC_MyTasks --> UC_Today
+UC_MyTasks --> UC_Weekly
+
+
+
+' User Settings Relationships
+User -> UC_Settings
+UC_Settings --> UC_UpdateInfo
+UC_Settings --> UC_ChangePass
+UC_Settings --> UC_SetCapacity
+UC_Settings --> UC_UpdateStatus
+UC_Settings --> UC_DeleteAccount
+
+' Task Distribution Relationships
+User -> UC_Distribute
+UC_Distribute --> UC_AutoDistribute
+UC_Distribute --> UC_ManualDistribute
+
+@enduml

@@ -1,0 +1,39 @@
+@startuml
+
+entity task #f2f0f0 {
+
+taskId : VARCHAR(36) <<PK>>--
+completed : TINYINT(1) 
+name : VARCHAR(255)
+description : TEXT
+createdDate : DATETIME
+dueDate : DATETIME
+completedDate : DATETIME
+priority : VARCHAR(255)
+taskWeight : INT
+taskSize : VARCHAR(255)
+}
+
+entity user #f2f0f0 {
+
+userId : VARCHAR(36) <<PK>>--
+firstName : VARCHAR(255)
+lastName : VARCHAR(255)
+email : VARCHAR(255)
+passwordHash : BLOB
+salt : BLOB
+workloadCapacity : INT
+sickness : TINYINT(1) [default: 0]
+}
+
+entity task_assignees #f2f0f0 {
+
+taskId : VARCHAR(36) <<PK, FK>>
+userId : VARCHAR(36) <<PK, FK>>
+}
+
+' Relationships
+task_assignees::taskId --> task::taskId
+task_assignees::userId --> user::userId
+
+@enduml

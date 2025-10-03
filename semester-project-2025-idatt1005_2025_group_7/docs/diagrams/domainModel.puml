@@ -1,0 +1,49 @@
+@startuml
+
+skinparam {
+    shadowing true
+    linetype ortho
+    nodesep 40
+    ranksep 180
+    dpi 300
+}
+
+' Objects
+object "H.O.M.E. Application" as Home
+
+object User
+object Task
+object "Task display" as task_display
+object "Create / modify / complete task" as task_actions
+object "Distribute tasks" as task_distribution
+object Statistics
+
+object "User Settings" as user_settings
+object "Personal information" as personal_info
+object "Account settings" as account_settings
+
+object "User authentication" as Authentication
+
+' Relationships
+Home -- "0..*" User
+Home -- Authentication : "manages"
+Home -> task_display : "has"
+task_display -> "0..*" Task : "contains"
+
+User "1..*" <--> "0..*" Task: "assigned to"
+
+User -> task_display : "views"
+User -> task_actions : "can"
+task_actions - Task : "affects"
+User --> task_distribution : "can"
+
+User --> Statistics : "has"
+User "1" --> "1" user_settings : "configures"
+User --> Authentication : "logs in via"
+
+user_settings --> personal_info : "include"
+user_settings --> account_settings : "include"
+
+Statistics --> "0..*" Task : "uses"
+
+@enduml

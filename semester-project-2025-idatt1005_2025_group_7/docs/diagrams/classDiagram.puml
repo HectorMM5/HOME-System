@@ -1,0 +1,244 @@
+@startuml
+
+'!theme plain
+left to right direction
+skinparam linetype ortho
+'skinparam backgroundcolor transparent
+skinparam dpi 300
+
+class AssigneesDao {
+  + AssigneesDao(DbConnectionProvider):
+  - logger: Logger
+  - connectionProvider: DbConnectionProvider
+  + assignUserToTask(UUID, UUID): void
+  + removeAllTaskAssignees(UUID): void
+}
+class DatabaseCloner {
+  + DatabaseCloner():
+  - logger: Logger
+  - remoteDatabase: DbConnectionProvider
+  - localDatabase: H2ConnectionProvider
+  + updateLocalDatabase(): void
+}
+class DatabaseRefresher {
+  - DatabaseRefresher():
+  - instance: DatabaseRefresher
+  - scheduler: ScheduledExecutorService
+  - logger: Logger
+  - isRunning: boolean
+  + start(): void
+  + getInstance(): DatabaseRefresher
+}
+class DatabaseService {
+  - DatabaseService():
+  - assigneesDao: AssigneesDao
+  - userDao: UserDao
+  - taskChangeDao: TaskChangeDao
+  - logger: Logger
+  - taskDao: TaskDao
+  - instance: DatabaseService
+  + getTasksCompletedThisWeek(): List<Task>
+  + getUserWorkload(User): int
+  + getUserAvailableCapacity(User): int
+  + assignTaskToUser(Task, User, UUID): void
+  + updateTask(Task, UUID): void
+  + getAllUsersByCapacity(): List<User>
+  + getTaskAssignees(Task): List<User>
+  + validatePassword(User, String): boolean
+  + authenticateUser(String, String): User
+  + completeTask(Task, UUID): void
+  + logTaskChange(UUID, String, UUID): void
+  + updateUser(User): void
+  + getTasksCompletedToday(): List<Task>
+  + getInstance(): DatabaseService
+  + deleteTask(Task): void
+  + addTask(String, String, LocalDateTime, Priority, Size, List<UUID>): void
+  + getTaskChanges(UUID): List<TaskChange>
+  + getUnassignedTasksBySizeAndPriority(): List<Task>
+  + removeUser(User): void
+  + getTasksAssignedToUser(User): List<Task>
+  - userExists(UUID): boolean
+  + addUser(String, String, String, String): boolean
+  + updateUserPassword(User, String): void
+}
+class H2ConnectionProvider {
+  + H2ConnectionProvider():
+  - logger: Logger
+  - localDatabase: H2ConnectionProvider
+  - url: String
+  - connection: Connection
+  + close(Connection, PreparedStatement, ResultSet): void
+  + getConnection(): Connection
+  + instance(): H2ConnectionProvider
+}
+class H2Manager {
+  - H2Manager():
+  - logger: Logger
+  - h2database: H2ConnectionProvider
+  + assignmentExists(UUID, UUID): boolean
+  + getUserById(UUID): User
+  + getTaskChanges(UUID): List<TaskChange>
+  + getTasksDueThisWeek(): List<Task>
+  - constructUserFromResultSet(ResultSet): User?
+  + getAllTasks(): List<Task>
+  + getTasksCompletedThisWeek(): List<Task>
+  + getAllUsers(): List<User>
+  - constructTaskFromResultSet(ResultSet): Task?
+  + getTasksCompletedToday(): List<Task>
+  + getTasksDueToday(): List<Task>
+  + deleteUser(UUID): void
+  + getTaskByName(String): List<Task>
+  + getAllAssignments(): List<Pair<UUID, UUID>>
+  + deleteTask(UUID): void
+  - constructTaskChangeFromResultSet(ResultSet): TaskChange?
+  + updateLocalStorage(): void
+  + getCompletedTasks(): List<Task>
+  + getOpenTasks(): List<Task>
+  + getUserByEmail(String): User
+  + getTaskById(UUID): Task
+}
+class MainApp {
+  + MainApp():
+  - taskManager: TaskEventManager
+  - logger: Logger
+  - signUpView: SignUpView
+  - viewControllers: Map<Class<?>, Object>
+  - mainView: MainView
+  - loginView: LoginView
+  - root: BorderPane
+  - primaryStage: Stage
+  - loggedInUser: User
+  + getRoot(): BorderPane
+  + getUser(): User
+  - setupStage(): void
+  + getTaskManager(): TaskEventManager
+  - initializeViews(): void
+  + setUser(User): void
+  + getMainView(): MainView
+  + getLoginView(): LoginView
+  + initializeButtonClickObserver(ButtonClickObserver): void
+  + start(Stage): void
+  + getSignUpView(): SignUpView
+  + main(String[]): void
+}
+class Task {
+  + Task(UUID, boolean, String, String, LocalDateTime, LocalDateTime, Priority, Size):
+  - description: String
+  - priority: Priority
+  - createdDate: LocalDateTime
+  - dueDate: LocalDateTime
+  - completed: boolean
+  - name: String
+  - assignedUserIds: List<UUID>
+  - id: UUID
+  - size: Size
+  - completedDate: LocalDateTime
+  + setDescription(String): void
+  + setId(UUID): void
+  + getCreatedDate(): LocalDateTime
+  + getDueDate(): LocalDateTime
+  + setDueDate(LocalDateTime): void
+  + setAssignedUserIds(List<UUID>): void
+  + getAssignedUserIds(): List<UUID>
+  + setPriority(Priority): void
+  + getName(): String
+  + setCompletedDate(LocalDateTime): void
+  + getId(): UUID
+  + getDescription(): String
+  + getPriority(): Priority
+  + setCreatedDate(LocalDateTime): void
+  + isCompleted(): boolean
+  + setSize(Size): void
+  + getCompletedDate(): LocalDateTime
+  + setName(String): void
+  + setCompleted(boolean): void
+  + getSize(): Size
+  + addAssignedUserId(UUID): void
+}
+entity TaskChange << record >> {
+  + TaskChange(UUID, UUID, String, UUID, LocalDateTime):
+  - taskId: UUID
+  - changedAt: LocalDateTime
+  - description: String
+  - id: UUID
+  - changedBy: UUID
+  + description(): String
+  + taskId(): UUID
+  + changedBy(): UUID
+  + changedAt(): LocalDateTime
+  + id(): UUID
+}
+class TaskChangeDao {
+  + TaskChangeDao(DbConnectionProvider):
+  - logger: Logger
+  - connectionProvider: DbConnectionProvider
+  + getChangesByTaskId(UUID): List<TaskChange>
+  - constructTaskChangeFromResultSet(ResultSet): TaskChange
+  + addChange(TaskChange): void
+}
+class TaskDao {
+  + TaskDao(DbConnectionProvider, AssigneesDao):
+  - logger: Logger
+  - connectionProvider: DbConnectionProvider
+  - TASK_NOT_FOUND_MESSAGE: String
+  - assigneesDao: AssigneesDao
+  + addTask(Task): void
+  - updateAssignments(Task): void
+  + deleteTask(Task): void
+  + updateTask(Task): void
+}
+class User {
+  + User(UUID, String, String, String, byte[], byte[], int, boolean):
+  - email: String
+  - sickness: boolean
+  - id: UUID
+  - firstName: String
+  - salt: byte[]
+  - taskCapacity: int
+  - lastName: String
+  - passwordHash: byte[]
+  + setId(UUID): void
+  + getId(): UUID
+  + setSalt(byte[]): void
+  + getFirstName(): String
+  + setTaskCapacity(int): void
+  + getLastName(): String
+  + getSalt(): byte[]
+  + setPasswordHash(byte[]): void
+  + equals(Object): boolean
+  + hashCode(): int
+  + getSickness(): boolean
+  + setEmail(String): void
+  + setLastName(String): void
+  + getEmail(): String
+  + setFirstName(String): void
+  + getPasswordHash(): byte[]
+  + getTaskCapacity(): int
+  + setSickness(boolean): void
+}
+class UserDao {
+  + UserDao(DbConnectionProvider):
+  - logger: Logger
+  - connectionProvider: DbConnectionProvider
+  + removeUser(User): void
+  + updateUser(User): void
+  + addUser(User): void
+}
+
+DatabaseCloner       "1" *-[#595959,plain]-> "localDatabase\n1" H2ConnectionProvider
+DatabaseService       -[#595959,dashed]->  AssigneesDao         : "«create»"
+DatabaseService      "1" *-[#595959,plain]-> "assigneesDao\n1" AssigneesDao
+DatabaseService      "1" *-[#595959,plain]-> "taskChangeDao\n1" TaskChangeDao
+DatabaseService       -[#595959,dashed]->  TaskChangeDao        : "«create»"
+DatabaseService       -[#595959,dashed]->  TaskDao              : "«create»"
+DatabaseService      "1" *-[#595959,plain]-> "taskDao\n1" TaskDao
+DatabaseService       -[#595959,dashed]->  UserDao              : "«create»"
+DatabaseService      "1" *-[#595959,plain]-> "userDao\n1" UserDao
+H2Manager            "1" *-[#595959,plain]-> "h2database\n1" H2ConnectionProvider
+H2Manager             -[#595959,dashed]->  Task                 : "«create»"
+H2Manager             -[#595959,dashed]->  TaskChange           : "«create»"
+H2Manager             -[#595959,dashed]->  User                 : "«create»"
+MainApp              "1" *-[#595959,plain]-> "loggedInUser\n1" User
+MainApp              "1" *-[#595959,plain]-> "databaseRefresher\n1" DatabaseRefresher
+TaskDao              "1" *-[#595959,plain]-> "assigneesDao\n1" AssigneesDao
+@enduml
